@@ -71,18 +71,15 @@ Class Monad (C: Type) (mc: Morp C) (catC: Category C mc) (F: C -> C)
   }.
 Check Monad.
 
-Class Adjunctions (C D: Type)  (mc: Morp C) (catC: Category C mc) 
-                                         (md: Morp D) (catD: Category D md)
-                               (F: C -> D) (G: D -> C) 
-                                         (fmapF : forall (a b: C) (f: arrow b a), (arrow (F b) (F a)))
-                                         (fmapG : forall (a b: D) (f: arrow b a), (arrow (G b) (G a)))
-                                         `(@Functor C D mc catC md catD F fmapF) 
-                                         `(@Functor D C md catD mc catC G fmapG) :=
+Class Adjunction (C D: Type)  (mc: Morp C) (catC: Category C mc) 
+                              (md: Morp D) (catD: Category D md)
+                 (F: C -> D) (G: D -> C) 
+                              (fmapF : forall (a b: C) (f: arrow b a), (arrow (F b) (F a)))
+                              (fmapG : forall (a b: D) (f: arrow b a), (arrow (G b) (G a)))
+                              `(@Functor C D mc catC md catD F fmapF) 
+                              `(@Functor D C md catD mc catC G fmapG) :=
   {
-     bijl : forall (x: C) (a: D), (arrow a (F x)) -> (arrow (G a) x);
-     bijr : forall (x: C) (a: D), (arrow (G a) x) -> (arrow a (F x))
+     bijl : forall (b: C) (a: D), (arrow a (F b)) -> (arrow (G a) b);
+     bijr : forall (b: C) (a: D), (arrow (G a) b) -> (arrow a (F b))
   }.
-Check Adjunctions.
-
-
-
+Check Adjunction.

@@ -13,8 +13,7 @@ Class Category (A: Type) `(@Morp A): Type :=
      arrows_setoid :> forall a b, Setoid (arrow b a);
      identity : forall {a: A}, arrow a a;
      comp : forall {a b c}, (arrow a b) -> (arrow b c) -> (arrow a c);
-       assoc : forall {a b c d} (f : arrow b a) (g : arrow c b) (h : arrow d c), comp h (comp g f) == comp (comp h g) f
-    (*   proper :> forall a b c, Proper (equiv ==> equiv ==> equiv) (@comp a b c) *)
+     assoc : forall {a b c d} (f : arrow b a) (g : arrow c b) (h : arrow d c), comp h (comp g f) == comp (comp h g) f
   }.
 Check Category. 
 
@@ -30,12 +29,14 @@ Class Functor (C D: Type) (mc: Morp C) (catC: Category C mc)
   }.
 Check Functor.
 
- Definition coq_id_on_obj (A: Type) (a: A) := a.
- Definition coq_id_on_func (C: Type) (mc: Morp C) (catC: Category C mc) (a b:C) (f: (@arrow C mc b a)) := f.
- Check coq_id_on_func.
+ Definition coq_id_on_objects (A: Type) (a: A) := a.
+ Definition coq_id_on_morphisms (C: Type) (mc: Morp C) (catC: Category C mc) (a b:C) (f: (@arrow C mc b a)) := f.
+ Check coq_id_on_morphisms.
 
- Instance ID (C: Type) (mc: Morp C) (catC: Category C mc) : (@Functor C C mc catC mc catC (coq_id_on_obj C) (coq_id_on_func C mc catC)).
- Proof. split; unfold coq_id_on_func; reflexivity. Qed. 
+ Program Instance ID (C: Type) (mc: Morp C) (catC: Category C mc) : 
+                       (@Functor C C mc catC mc catC (coq_id_on_objects C) (coq_id_on_morphisms C mc catC)).
+ Next Obligation. unfold coq_id_on_objects; reflexivity. Qed.
+ Next Obligation. unfold coq_id_on_objects; reflexivity. Qed.
  Check ID.
 
 Class NaturalTransformation (C D: Type)  (mc: Morp C) (catC: Category C mc) 

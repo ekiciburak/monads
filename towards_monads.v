@@ -35,7 +35,7 @@ Check Functor.
 
  Program Instance ID (C: Type) (mc: Morp C) (catC: Category C mc) : 
                        (@Functor C C mc catC mc catC (coq_id_on_objects C) (coq_id_on_morphisms C mc catC)).
- Next Obligation. unfold coq_id_on_objects; reflexivity. Qed.
+ Obligation 1. unfold coq_id_on_objects; reflexivity. Qed.
  Next Obligation. unfold coq_id_on_objects; reflexivity. Qed.
  Check ID.
 

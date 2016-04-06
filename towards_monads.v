@@ -19,6 +19,20 @@ Check Category.
 
 Notation " x 'o' y " := (comp x y) (at level 40, left associativity).
 
+Class Product (C: Type) (mc: Morp C) (catC: Category C mc) (p a b: C)
+              (pi1: arrow a p)
+              (pi2: arrow b p) :=
+  {
+    pcomm_diag: forall (x: C) (f1: arrow a x) (f2: arrow b x), exists !(g: arrow p x), f1 == pi1 o g /\ f2 == pi2 o g
+  }.
+
+Class coProduct (C: Type) (mc: Morp C) (catC: Category C mc) (cp a b: C)
+                (inl: arrow cp a)
+                (inr: arrow cp b) :=
+  {
+    cpcomm_diag: forall (x: C) (f1: arrow x a) (f2: arrow x b), exists !(g: arrow x cp), f1 == g o inl /\ f2 == g o inr
+  }.
+
 Class Functor (C D: Type) (mc: Morp C) (catC: Category C mc) 
                           (md: Morp D) (catD: Category D md)
               (F: C -> D)
@@ -28,6 +42,18 @@ Class Functor (C D: Type) (mc: Morp C) (catC: Category C mc)
     preserve_comp : forall {a b c: C} (f: arrow b a) (g : arrow c b), fmap (g o f) == (fmap g) o (fmap f)
   }.
 Check Functor.
+
+Definition Product_Functor (C: Type) (mc: Morp C) (catC: Category C mc) 
+                                     (mcc: Morp (C * C)) (catCC: Category (C * C) mcc)
+                           (F: C -> (C * C)) 
+                                     (fmapF : forall (a b: C) (f: arrow b a), (arrow (F b) (F a))) :=
+                                     `(@Functor C (C*C) mc catC mcc catCC F fmapF).
+
+Definition coProduct_Functor (C: Type) (mc: Morp C) (catC: Category C mc) 
+                                       (mcs: Morp (C + C)) (catCS: Category (C + C) mcs)
+                             (F: C -> (C + C)) 
+                                       (fmapF : forall (a b: C) (f: arrow b a), (arrow (F b) (F a))) :=
+                                       `(@Functor C (C+C) mc catC mcs catCS F fmapF).
 
  Definition coq_id_on_objects (A: Type) (a: A) := a.
  Definition coq_id_on_morphisms (C: Type) (mc: Morp C) (catC: Category C mc) (a b:C) (f: (@arrow C mc b a)) := f.

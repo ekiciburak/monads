@@ -20,18 +20,32 @@ Check Category.
 Notation " x 'o' y " := (comp x y) (at level 40, left associativity).
 
 Class Product (C: Type) (mc: Morp C) (catC: Category C mc) (p a b: C)
-              (pi1: arrow a p)
-              (pi2: arrow b p) :=
+              (pi1: arrow a p) (pi2: arrow b p) :=
   {
     pcomm_diag: forall (x: C) (f1: arrow a x) (f2: arrow b x), exists !(g: arrow p x), f1 == pi1 o g /\ f2 == pi2 o g
   }.
 
 Class coProduct (C: Type) (mc: Morp C) (catC: Category C mc) (cp a b: C)
-                (inl: arrow cp a)
-                (inr: arrow cp b) :=
+                (inl: arrow cp a) (inr: arrow cp b) :=
   {
     cpcomm_diag: forall (x: C) (f1: arrow x a) (f2: arrow x b), exists !(g: arrow x cp), f1 == g o inl /\ f2 == g o inr
   }.
+
+Class Pullback (C: Type) (mc: Morp C) (catC: Category C mc) (p a b c: C) 
+               (f: arrow c a) (g: arrow c b)
+               (pi1: arrow a p) (pi2: arrow b p)
+               (commd: g o pi2 == f o pi1) :=
+{
+   pbcomm_diag: forall (q: C) (q1: arrow a q) (q2: arrow b q), exists !(u: arrow p q), pi2 o u == q2 /\ pi1 o u == q1
+}.
+
+Class Pushout (C: Type) (mc: Morp C) (catC: Category C mc) (p a b c: C) 
+               (f: arrow a c) (g: arrow b c)
+               (inl: arrow p a) (inr: arrow p b)
+               (commd: inr o g == inl o f) :=
+{
+   pocomm_diag: forall (q: C) (q1: arrow q a) (q2: arrow q b), exists !(u: arrow q p), u o inr == q2 /\ u o inl == q1
+}.
 
 Class Functor (C D: Type) (mc: Morp C) (catC: Category C mc) 
                           (md: Morp D) (catD: Category D md)

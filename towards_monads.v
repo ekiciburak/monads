@@ -81,6 +81,7 @@ Class Functor (catC catD: Category) (F: catC -> catD)
   }.
 Check Functor.
 
+(*define how the identity functor behaves on objects and morphisms*)
 Definition coq_id_on_objects (catC: Category) (a: catC) := a.
 Definition coq_id_on_morphisms (catC: Category) (a b: catC) (f: (@arrow catC b a)) := f.
 Check coq_id_on_morphisms.
@@ -94,6 +95,31 @@ Next Obligation. unfold coq_id_on_objects. reflexivity. Qed.
 Next Obligation. unfold coq_id_on_objects; reflexivity. Qed.*)
 Check ID.
 
+
+(*define how the functor composition behaves on objects and morphisms*)
+Definition coq_comp_on_objects (catC catD catE: Category) (F: catC -> catD) (G: catD -> catE) (a: catC) := 
+G (F a).
+Definition coq_comp_on_morphism (catC catD catE: Category) (F: catC -> catD) (G: catD -> catE) 
+                                (fmapF  : forall (a b: catC) (f: arrow catC b a), (arrow catD (F b) (F a)))
+                                (fmapG  : forall (a b: catD) (f: arrow catD b a), (arrow catE (G b) (G a)))
+                                (a b: catC) (f: (arrow catC b a)) :=
+fmapG _ _ (fmapF _ _ f).
+Check coq_comp_on_morphism.
+
+Program Instance Compose_Functors (catC catD catE: Category) (F: catC -> catD) (G: catD -> catE) 
+                                  (fmapF  : forall (a b: catC) (f: arrow catC b a), (arrow catD (F b) (F a)))
+                                  `(FunctF: @Functor catC catD F fmapF) 
+                                  (fmapG  : forall (a b: catD) (f: arrow catD b a), (arrow catE (G b) (G a)))
+                                  `(FunctG: @Functor catD catE G fmapG) 
+                                  (fmapGF : forall (a b: catC) (f: arrow catC b a), (arrow catE (G (F b)) (G (F a)))):
+                                  (@Functor catC catE (coq_comp_on_objects catC catD catE (F: catC -> catD) (G: catD -> catE))
+                                                (@coq_comp_on_morphism catC catD catE F G fmapF fmapG)).
+Obligation 1. unfold coq_comp_on_morphism, coq_comp_on_objects. remember (@preserve_id catC catD F fmapF FunctF a).
+  remember (@preserve_id catD catE G fmapG FunctG (F a)). rewrite <- e0. rewrite e. reflexivity. Qed.
+Next Obligation. unfold coq_comp_on_objects, coq_comp_on_morphism. remember (@preserve_comp catC catD F fmapF FunctF a b c f g).
+  remember (@preserve_comp catD catE G fmapG FunctG (F a) (F b) (F c) (fmapF _ _ f) (fmapF _ _ g)).
+  rewrite <- e0. rewrite e. reflexivity. Qed.                   
+ 
 Class NaturalTransformation (catC catD: Category) (F G: catC -> catD) 
                             (fmapF : forall (a b: catC) (f: arrow catC b a), (arrow catD (F b) (F a)))
                             (fmapG : forall (a b: catC) (f: arrow catC b a), (arrow catD (G b) (G a)))

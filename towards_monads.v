@@ -19,10 +19,22 @@ Proof.
 refine (@mk_Category 
 (catC * catD)%type
 (fun a b => (arrow catC (fst a) (fst b) * arrow catD (snd a) (snd b))%type)
-(fun x => (identity catC (fst x), identity catD (snd x)))
+(fun a => (identity catC (fst a), identity catD (snd a)))
 (fun a b c f2 f1 => (fst f2 o fst f1, snd f2 o snd f1))
 _ ). intros. setoid_rewrite <- assoc. reflexivity.
 Qed.
+Check Product_Category.
+
+Definition Dual_Category (catC: Category) : Category.
+Proof. 
+refine (@mk_Category 
+(catC)%type
+(fun a b => (arrow catC b a %type))
+(fun a => (@identity catC a))
+(fun a b c f1 f2 => f2 o f1)
+_ ). intros. setoid_rewrite <- assoc. reflexivity.
+Qed.
+Check Dual_Category.
 
 Record Product (catC: Category) (p a b: obj catC)
                (pi1: arrow catC a p) (pi2: arrow catC b p): Type :=

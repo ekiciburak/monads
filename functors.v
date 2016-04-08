@@ -15,10 +15,35 @@ Class Functor `(catC: Category) `(catD: Category) (F: catC -> catD)
   }.
 Check Functor.
 
-Definition Opposite_Functor `(catC: Category) `(catD: Category) 
+Program Instance Opposite_Functor `(catC: Category) `(catD: Category) 
                             (F: catC -> catD)
                             (fmapF: forall (a b: catC) (f: arrow catC b a), (arrow catD (F b) (F a)))
-                                (FunctF: Functor catC catD F fmapF): (Functor (Dual_Category catC) (Dual_Category catD) F (fun a b => fmapF b a)).
+                            `(FunctF: Functor catC catD F fmapF): 
+                                `(Functor (Dual_Category catC) (Dual_Category catD) F (fun a b => fmapF b a)).
+Obligation 1. specialize (@mk_Functor
+                (Dual_Category catC) 
+                (Dual_Category catD)
+                F
+                (fun a b => fmapF b a)
+                (fun a => (@preserve_id catC catD F fmapF FunctF a)) 
+                (fun a b c f g => (@preserve_comp catC catD F fmapF FunctF c b a g f))
+              ). intros. destruct H as [H1 H2]. apply H1. Defined.
+Next Obligation. specialize (@mk_Functor
+                (Dual_Category catC) 
+                (Dual_Category catD)
+                F
+                (fun a b => fmapF b a)
+                (fun a => (@preserve_id catC catD F fmapF FunctF a)) 
+                (fun a b c f g => (@preserve_comp catC catD F fmapF FunctF c b a g f))
+              ). intros. destruct H as [H1 H2]. apply H2. Defined.
+Check Opposite_Functor.
+
+(* another way of shoing the same instance above:
+Definition Opposite_Functor_v2 `(catC: Category) `(catD: Category) 
+                            (F: catC -> catD)
+                            (fmapF: forall (a b: catC) (f: arrow catC b a), (arrow catD (F b) (F a)))
+                            `(FunctF: Functor catC catD F fmapF): 
+                                `(Functor (Dual_Category catC) (Dual_Category catD) F (fun a b => fmapF b a)).
 Proof. refine (@mk_Functor
                 (Dual_Category catC) 
                 (Dual_Category catD)
@@ -28,13 +53,33 @@ Proof. refine (@mk_Functor
                 (fun a b c f g => (@preserve_comp catC catD F fmapF FunctF c b a g f))
               ).
 Defined.
-Check Opposite_Functor.
+*)
+
+Definition Opposite_Opposite_Functor `(catC: Category) `(catD: Category) 
+                                     (F: (Dual_Category catC) -> (Dual_Category catD))
+                                     (fmapF: forall (a b: (Dual_Category catC)) (f: arrow (Dual_Category catC) b a), 
+                                        (arrow (Dual_Category catD) (F b) (F a)))
+                                     `(FunctF: Functor (Dual_Category catC) (Dual_Category catD) F fmapF):
+                                        (Functor catC catD F (fun a b => fmapF b a)).
+Proof. refine (@mk_Functor
+                catC 
+                catD
+                F
+                (fun a b => fmapF b a)
+                (fun a => (@preserve_id (Dual_Category catC) (Dual_Category catD) F fmapF FunctF a)) 
+                (fun a b c f g => (@preserve_comp (Dual_Category catC) (Dual_Category catD) F fmapF FunctF c b a g f))
+              ).
+Defined.
+Check Opposite_Opposite_Functor.
+
+(** TODO:= prove the theorem here: oppositing is involutive **)
 
 (*define how the identity functor behaves on objects and morphisms*)
 Definition coq_id_on_objects (catC: Category) (a: catC) := a.
 Definition coq_id_on_morphisms (catC: Category) (a b: catC) (f: (@arrow catC b a)) := f.
 Check coq_id_on_morphisms.
 
+(** the identity functor **)
 Program Instance ID (catC: Category): 
                        (@Functor catC catC (coq_id_on_objects catC)  (coq_id_on_morphisms catC)).
 (*
@@ -55,6 +100,7 @@ Definition coq_comp_on_morphism (catC catD catE: Category) (F: catC -> catD) (G:
 fmapG _ _ (fmapF _ _ f).
 Check coq_comp_on_morphism.
 
+(**functors compose**)
 Program Instance Compose_Functors (catC catD catE: Category) (F: catC -> catD) (G: catD -> catE) 
                                   (fmapF  : forall (a b: catC) (f: arrow catC b a), (arrow catD (F b) (F a)))
                                   (FunctF: @Functor catC catD F fmapF) 
@@ -69,5 +115,15 @@ Next Obligation. unfold coq_comp_on_objects, coq_comp_on_morphism. remember (@pr
   remember (@preserve_comp catD catE G fmapG FunctG (F a) (F b) (F c) (fmapF _ _ f) (fmapF _ _ g)).
   rewrite <- e0. rewrite e. reflexivity. Defined.
 Check Compose_Functors.
+
+(** constant functor **)
+Definition Constant_Functor `(catC: Category) `(catD: Category) (const: catD): 
+                                              `(Functor catC catD (fun _ => const) (fun _ _ _ => (@identity catD const))).
+Proof. refine(@mk_Functor
+               catC
+               catD _ _ _ _
+             ). intros. reflexivity. intros. simpl. admit. (** mind the admit here; provide the axiom id o ... o id = id **)
+Defined.
+
 
 End Make.

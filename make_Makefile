@@ -1,1 +1,0 @@
-coq_makefile notation.v categories.v prods_pullbacks.v functors.v natural_transformations.v monads.v adjunctions.v -o Makefile

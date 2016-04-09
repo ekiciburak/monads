@@ -1,7 +1,7 @@
 Require Import Morphisms.
 Import ProperNotations.
 Require Import SetoidClass.
-Require notation categories functors natural_transformations.
+Require notation categories prods_pullbacks functors natural_transformations.
 
 Module Make(Import M: notation.T).
  Module Export monads_exp := natural_transformations.Make(M).

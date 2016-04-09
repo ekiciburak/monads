@@ -1,7 +1,7 @@
 Require Import Morphisms.
 Import ProperNotations.
 Require Import SetoidClass.
-Require notation categories.
+Require notation categories prods_pullbacks.
 
 Module Make(Import M: notation.T).
  Module Export functors_exp := categories.Make(M).
@@ -127,5 +127,6 @@ Proof. refine(@mk_Functor
                catD _ _ _ _
              ). intros. reflexivity. intros. simpl. rewrite identity_identity; reflexivity.
 Defined.
+Check Constant_Functor.
 
 End Make.

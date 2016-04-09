@@ -38,7 +38,7 @@ Next Obligation. specialize (@mk_Functor
               ). intros. destruct H as [H1 H2]. apply H2. Defined.
 Check Opposite_Functor.
 
-(* another way of shoing the same instance above:
+(* another way of showing the same instance above:
 Definition Opposite_Functor_v2 `(catC: Category) `(catD: Category) 
                             (F: catC -> catD)
                             (fmapF: forall (a b: catC) (f: arrow catC b a), (arrow catD (F b) (F a)))
@@ -116,14 +116,16 @@ Next Obligation. unfold coq_comp_on_objects, coq_comp_on_morphism. remember (@pr
   rewrite <- e0. rewrite e. reflexivity. Defined.
 Check Compose_Functors.
 
+(*TODO:= this might a part of the Category record *)
+Axiom identity_identity: forall (catC: Category) (x: catC), (@identity catC x) o (@identity catC x) = (@identity catC x).
+
 (** constant functor **)
 Definition Constant_Functor `(catC: Category) `(catD: Category) (const: catD): 
                                               `(Functor catC catD (fun _ => const) (fun _ _ _ => (@identity catD const))).
 Proof. refine(@mk_Functor
                catC
                catD _ _ _ _
-             ). intros. reflexivity. intros. simpl. admit. (** mind the admit here; provide the axiom id o ... o id = id **)
+             ). intros. reflexivity. intros. simpl. rewrite identity_identity; reflexivity.
 Defined.
-
 
 End Make.

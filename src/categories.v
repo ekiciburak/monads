@@ -71,6 +71,4 @@ intros. rewrite <- assoc2. reflexivity. Defined.
 Check Dual_Category2.
 *)
 
-(*TODO:= add Kleisli and coKleisli categories *)
-
 End Make.

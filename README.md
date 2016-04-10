@@ -1,5 +1,5 @@
 # monads
 
-monads and adjunctions of category theory.
+Some categorical structures in Coq.
 
-to make it; just type "make" on Linux.
+To make it; just type "make" on Linux.

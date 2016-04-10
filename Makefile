@@ -7,4 +7,4 @@ all: $(MAKF)
 	(cd $*; ./make_Makefile; make)
 
 clean:
-	- $(foreach dir, $(DIRS), (cd $(dir); make clean; rm Makefile);)
+	- $(foreach dir, $(DIRS), (cd $(dir); make clean; rm Makefile; rm *~);)

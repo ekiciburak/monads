@@ -11,9 +11,6 @@ Definition id {catC: Category} (a: catC) := a.
 Theorem rcancel:  forall {catC: Category} {a b c: catC} (f g: arrow _ c b) (h: arrow _ b a), f = g -> f o h = g o h.
 Proof. intros. rewrite H. reflexivity. Qed.
 
-Theorem lcancel:  forall {catC: Category} {a b c: catC} (f g: arrow _ b a) (h: arrow _ c b), f = g -> h o f = h o g.
-Proof. intros. rewrite H. reflexivity. Qed.
-
 Definition Kleisli_Category `(catC: Category) (F: catC -> catC)
                             (fmapId : forall (a b: catC) (f: arrow catC b a), (arrow catC (id b) (id a)))
                             (fmapT  : forall (a b: catC) (f: arrow catC b a), (arrow catC (F b) (F a)))
@@ -32,9 +29,8 @@ Proof. refine (@mk_Category (catC)
                             _ ).
        intros. simpl. destruct nt1, nt2, M, T, T2. unfold adjunctions_exp.id, id in *. rewrite preserve_comp0.
        rewrite assoc. rewrite preserve_comp0. rewrite assoc. rewrite (comm_diagram3 a). do 2 rewrite assoc.
-       specialize(@comm_diag1 b (F a) f). rewrite <- assoc. (* rewrite comm_diag1. ?? *) rewrite assoc.
-       apply rcancel. apply rcancel. rewrite <- assoc.
-       rewrite <- assoc. apply lcancel. rewrite comm_diag1. reflexivity. Qed.
+       specialize(@comm_diag1 b (F a) f). (* rewrite comm_diag1. ?? *) apply rcancel. apply rcancel. 
+       rewrite <- assoc. rewrite <- assoc. rewrite comm_diag1. reflexivity. Qed.
 Check Kleisli_Category.     
 
 Definition coKleisli_Category (catC: Category) (F: catC -> catC)
@@ -53,7 +49,12 @@ Proof. refine (@mk_Category (catC)
                             (fun a => epsilon a) 
                             (fun a b c f g => g o (fmapD _ _ f) o (delta a))
                             _ ).
- (*to dualize*) admit. (*mind the admit here*) Qed.
+       intros. simpl. destruct nt1, nt2, CM, D, D2. unfold adjunctions_exp.id, id in *. rewrite preserve_comp0.
+       rewrite assoc. rewrite preserve_comp0. do 5 rewrite <- assoc. rewrite (cm_comm_diagram3 d). do 5 rewrite assoc.
+       apply rcancel. specialize(@comm_diag1 (F d) c h). rewrite <- assoc. rewrite <- comm_diag1. do 2 rewrite assoc. reflexivity. Qed.
 Check coKleisli_Category.
 
+(**TODO:= rcancel??**)
+
 End Make.
+  

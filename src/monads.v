@@ -6,6 +6,8 @@ Require notation categories prods_pullbacks functors natural_transformations.
 Module Make(Import M: notation.T).
  Module Export monads_exp := natural_transformations.Make(M).
 
+Definition id {catC: Category} (a: catC) := a.
+
 Class Monad (catC: Category) (F: catC -> catC)
             (fmapId : forall (a b: catC) (f: arrow catC b a), (arrow catC (id b) (id a)))
             (fmapT  : forall (a b: catC) (f: arrow catC b a), (arrow catC (F b) (F a)))

@@ -13,7 +13,7 @@ Class NaturalTransformation (catC catD: Category) (F G: catC -> catD)
                             (fmapG : forall (a b: catC) (f: arrow catC b a), (arrow catD (G b) (G a)))
                             `(@Functor catC catD F fmapF) 
                             `(@Functor catC catD G fmapG) 
-                                                  (trans : forall (a: catC), (arrow catD (G a) (F a))): Type :=
+                                (trans : forall (a: catC), (arrow catD (G a) (F a))): Type :=
   {
     comm_diag: forall {a b: catC} (f: arrow catC b a), fmapG _ _ f o trans a = trans b o fmapF _ _ f
   }.

@@ -8,7 +8,7 @@ Module Make(Import M: notation.T).
 Record Category: Type := 
  mk_Category 
  {
-     obj :> Type;
+     obj : Type;
      arrow: obj -> obj -> Type;
      identity : forall a, arrow a a;
      comp : forall {a b c}, (arrow a b) -> (arrow b c) -> (arrow a c);
@@ -16,13 +16,15 @@ Record Category: Type :=
      identity_f: forall {a b} (f: arrow b a), comp (@identity b) f = f;
      f_identity: forall {a b} (f: arrow b a), comp f (@identity a) = f 
   }.
+Check obj.
+Check arrow.
 
 Notation " x 'o' y " := (comp _ x y) (at level 40, left associativity). 
 
 Definition Product_Category (catC catD: Category) : Category.
 Proof. 
   refine (@mk_Category 
-           (catC * catD)%type
+           (obj catC * obj catD)%type
            (fun a b => (arrow catC (fst a) (fst b) * arrow catD (snd a) (snd b))%type)
            (fun a => (identity catC (fst a), identity catD (snd a)))
            (fun a b c f2 f1 => (fst f2 o fst f1, snd f2 o snd f1))
@@ -41,7 +43,7 @@ Check Product_Category.
 Definition Dual_Category (catC: Category) : Category.
 Proof. 
   refine (@mk_Category 
-           (catC)%type
+           (obj catC)%type
            (fun a b => (arrow catC b a %type))
            (fun a => (@identity catC a))
            (fun a b c f1 f2 => f2 o f1)

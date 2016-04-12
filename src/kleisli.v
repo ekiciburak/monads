@@ -6,21 +6,21 @@ Require notation categories prods_pullbacks functors natural_transformations mon
 Module Make(Import M: notation.T).
  Module Export kleisli_exp := adjunctions.Make(M).
 
-Theorem rcancel:  forall {catC: Category} {a b c: catC} (f g: arrow _ c b) (h: arrow _ b a), f = g -> f o h = g o h.
+Theorem rcancel:  forall {catC: Category} {a b c: obj catC} (f g: arrow _ c b) (h: arrow _ b a), f = g -> f o h = g o h.
 Proof. intros. rewrite H. reflexivity. Qed.
 
-Definition Kleisli_Category `(catC: Category) (F: catC -> catC)
-                            (fmapT  : forall (a b: catC) (f: arrow catC b a), (arrow catC (F b) (F a)))
+Definition Kleisli_Category `(catC: Category) (F: obj catC -> obj catC)
+                            (fmapT  : forall (a b: obj catC) (f: arrow catC b a), (arrow catC (F b) (F a)))
                                (Id  : (Functor catC catC id (fun a b f => (@idf catC a b f))))
                                (T   : (Functor catC catC F fmapT))
-                               (T2  : (Functor catC catC (fun a: catC => F (F a)) (fun a b f => fmapT _ _ (fmapT _ _ f))))
-                                   (eta : forall (a: catC), (arrow catC (F a) (id a)))
-                                   (mu  : forall (a: catC), (arrow catC (F a) (F (F a))))
+                               (T2  : (Functor catC catC (fun a: obj catC => F (F a)) (fun a b f => fmapT _ _ (fmapT _ _ f))))
+                                   (eta : forall (a: obj catC), (arrow catC (F a) (id a)))
+                                   (mu  : forall (a: obj catC), (arrow catC (F a) (F (F a))))
                                       (nt1: NaturalTransformation catC catC id F (fun a b f => (@idf catC a b f)) fmapT Id T eta) 
-                                      (nt2: NaturalTransformation catC catC (fun a: catC => F (F a)) 
+                                      (nt2: NaturalTransformation catC catC (fun a: obj catC => F (F a)) 
                                                F (fun a b f => fmapT _ _ (fmapT _ _ f)) fmapT T2 T mu)
                                          (M: Monad catC F fmapT Id T T2 eta mu nt1 nt2) : (Category).
-Proof. refine (@mk_Category (catC)
+Proof. refine (@mk_Category (obj catC)
                             (fun a b => (@arrow catC (F b) (id a)))
                             (fun a => eta a) 
                             (fun a b c f g => (mu (id c)) o (fmapT _ _ g) o f)
@@ -37,18 +37,18 @@ Proof. refine (@mk_Category (catC)
 Defined.
 Check Kleisli_Category.     
 
-Definition coKleisli_Category (catC: Category) (F: catC -> catC)
-                              (fmapD  : forall (a b: catC) (f: arrow catC b a), (arrow catC (F b) (F a)))
+Definition coKleisli_Category (catC: Category) (F: obj catC -> obj catC)
+                              (fmapD  : forall (a b: obj catC) (f: arrow catC b a), (arrow catC (F b) (F a)))
                                  (Id  : (Functor catC catC id (fun a b f => (@idf catC a b f))))
                                  (D   : (Functor catC catC F fmapD))
-                                 (D2  : (Functor catC catC (fun a: catC => F (F a)) (fun a b f => fmapD _ _ (fmapD _ _ f))))
-                                    (epsilon : forall (a: catC), (arrow catC (id a) (F a)))
-                                    (delta   : forall (a: catC), (arrow catC (F (F a)) (F a)))
+                                 (D2  : (Functor catC catC (fun a: obj catC => F (F a)) (fun a b f => fmapD _ _ (fmapD _ _ f))))
+                                    (epsilon : forall (a: obj catC), (arrow catC (id a) (F a)))
+                                    (delta   : forall (a: obj catC), (arrow catC (F (F a)) (F a)))
                                        (nt1: NaturalTransformation catC catC F id fmapD (fun a b f => (@idf catC a b f)) D Id epsilon)
-                                       (nt2: NaturalTransformation catC catC F (fun a: catC => F (F a))
+                                       (nt2: NaturalTransformation catC catC F (fun a: obj catC => F (F a))
                                                 fmapD (fun a b f => fmapD _ _ (fmapD _ _ f)) D D2 delta)
                                           (CM: coMonad catC F fmapD Id D D2 epsilon delta nt1 nt2) : (Category).
-Proof. refine (@mk_Category (catC)
+Proof. refine (@mk_Category (obj catC)
                             (fun a b => (@arrow catC (id b) (F a)))
                             (fun a => epsilon a) 
                             (fun a b c f g => g o (fmapD _ _ f) o (delta a))

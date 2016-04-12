@@ -20,7 +20,8 @@ Definition Kleisli_Category `(catC: Category) (F: catC -> catC)
                                    (eta : forall (a: catC), (arrow catC (F a) (id a)))
                                    (mu  : forall (a: catC), (arrow catC (F a) (F (F a))))
                                       (nt1: NaturalTransformation catC catC id F fmapId fmapT Id T eta) 
-                                      (nt2: NaturalTransformation catC catC (fun a: catC => F (F a)) F (fun a b f => fmapT _ _ (fmapT _ _ f)) fmapT T2 T mu)
+                                      (nt2: NaturalTransformation catC catC (fun a: catC => F (F a)) 
+                                               F (fun a b f => fmapT _ _ (fmapT _ _ f)) fmapT T2 T mu)
                                          (M: Monad catC F fmapId fmapT Id T T2 eta mu nt1 nt2) : (Category).
 Proof. refine (@mk_Category (catC)
                             (fun a b => (@arrow catC (F b) (id a)))
@@ -42,7 +43,8 @@ Definition coKleisli_Category (catC: Category) (F: catC -> catC)
                                     (epsilon : forall (a: catC), (arrow catC (id a) (F a)))
                                     (delta   : forall (a: catC), (arrow catC (F (F a)) (F a)))
                                        (nt1: NaturalTransformation catC catC F id fmapD fmapId D Id epsilon)
-                                       (nt2: NaturalTransformation catC catC F (fun a: catC => F (F a)) fmapD (fun a b f => fmapD _ _ (fmapD _ _ f)) D D2 delta)
+                                       (nt2: NaturalTransformation catC catC F (fun a: catC => F (F a))
+                                                fmapD (fun a b f => fmapD _ _ (fmapD _ _ f)) D D2 delta)
                                           (CM: coMonad catC F fmapId fmapD Id D D2 epsilon delta nt1 nt2) : (Category).
 Proof. refine (@mk_Category (catC)
                             (fun a b => (@arrow catC (id b) (F a)))
@@ -51,10 +53,9 @@ Proof. refine (@mk_Category (catC)
                             _ ).
        intros. simpl. destruct nt1, nt2, CM, D, D2. unfold adjunctions_exp.id, id in *. rewrite preserve_comp0.
        rewrite assoc. rewrite preserve_comp0. do 5 rewrite <- assoc. rewrite (cm_comm_diagram3 d). do 5 rewrite assoc.
-       apply rcancel. specialize(@comm_diag1 (F d) c h). rewrite <- assoc. rewrite <- comm_diag1. do 2 rewrite assoc. reflexivity. Qed.
+       apply rcancel. specialize(@comm_diag1 (F d) c h). rewrite <- assoc. rewrite <- comm_diag1. do 2 rewrite assoc.
+       reflexivity. Qed.
 Check coKleisli_Category.
-
-(**TODO:= rcancel??**)
 
 End Make.
   

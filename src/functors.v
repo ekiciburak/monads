@@ -116,8 +116,8 @@ Next Obligation. unfold coq_comp_on_objects, coq_comp_on_morphism. remember (@pr
   rewrite <- e0. rewrite e. reflexivity. Defined.
 Check Compose_Functors.
 
-(*TODO:= this might a part of the Category record *)
-Axiom identity_identity: forall (catC: Category) (x: catC), (@identity catC x) o (@identity catC x) = (@identity catC x).
+(*TODO:= this might an obligaton of the Category record *)
+Axiom identity_identity: forall (catC: Category) (a: catC), (@identity catC a) o (@identity catC a) = (@identity catC a).
 
 (** constant functor **)
 Definition Constant_Functor `(catC: Category) `(catD: Category) (const: catD): 

@@ -22,10 +22,10 @@ Proof. refine (@mk_Category (obj catC)
                             _ _ _ ).
        - intros. simpl. destruct nt1, nt2, M, T, T2. simpl in *. unfold id in *. rewrite preserve_comp0.
          rewrite assoc. rewrite preserve_comp0. rewrite assoc. rewrite (comm_diagram3 a). do 2 rewrite assoc.
-         specialize(@comm_diag4 b (F a) f). (* rewrite comm_diag1. ?? *) apply rcancel. apply rcancel. 
-         rewrite <- assoc. rewrite <- assoc. rewrite comm_diag4. reflexivity.
+         specialize(@comm_diag1 b (F a) f). (* rewrite comm_diag1. ?? *) apply rcancel. apply rcancel. 
+         rewrite <- assoc. rewrite <- assoc. rewrite comm_diag1. reflexivity.
        - intros. unfold id in *. destruct nt1, nt2, M, T, T2.  simpl in *. unfold id in *.
-         specialize (@comm_diag3 b (F a) f). rewrite <- assoc. rewrite comm_diag3. rewrite assoc.
+         specialize (@comm_diag0 b (F a) f). rewrite <- assoc. rewrite comm_diag0. rewrite assoc.
          rewrite comm_diagram2_b4. rewrite identity_f. unfold idf. reflexivity.
        - intros. unfold id in *. destruct nt1, nt2, M, T, T2. simpl in *. unfold id in *. 
           rewrite comm_diagram4, comm_diagram2_b4, identity_f. reflexivity.
@@ -48,11 +48,11 @@ Proof. refine (@mk_Category (obj catC)
                             _ _ _ ).
       - intros. simpl. destruct nt1, nt2, CM, D, D2. simpl in *. unfold id in *. rewrite preserve_comp0.
          rewrite assoc. rewrite preserve_comp0. do 5 rewrite <- assoc. rewrite (cm_comm_diagram3 d).
-         do 5 rewrite assoc.  apply rcancel. specialize(@comm_diag4 (F d) c h). rewrite <- assoc.
-         rewrite <- comm_diag4. do 2 rewrite assoc. reflexivity.
+         do 5 rewrite assoc.  apply rcancel. specialize(@comm_diag1 (F d) c h). rewrite <- assoc.
+         rewrite <- comm_diag1. do 2 rewrite assoc. reflexivity.
       - intros. unfold id in *. destruct nt1, nt2, CM, D, D2. simpl in *. unfold id in *. rewrite <- assoc.
          rewrite cm_comm_diagram4, cm_comm_diagram_b4, f_identity. reflexivity.
-      - intros. unfold id in *. destruct nt1, nt2, CM, D, D2. simpl in *. unfold id in *. rewrite <- comm_diag3.
+      - intros. unfold id in *. destruct nt1, nt2, CM, D, D2. simpl in *. unfold id in *. rewrite <- comm_diag0.
          rewrite <- assoc. rewrite cm_comm_diagram_b4, f_identity. unfold idf; reflexivity.
 Defined.
 Check coKleisli_Category.

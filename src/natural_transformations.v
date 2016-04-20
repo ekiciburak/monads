@@ -19,7 +19,7 @@ Class NaturalTransformation (catC catD: Category) (F G: obj catC -> obj catD)
   mk_nt
   {
     trans    :  forall (a: obj catC), (arrow catD (G a) (F a));
-    comm_diag2:  forall {a b: obj catC} (f: arrow catC b a), fmapG _ _ f o trans a  = trans b o fmapF _ _ f
+    comm_diag:  forall {a b: obj catC} (f: arrow catC b a), fmapG _ _ f o trans a  = trans b o fmapF _ _ f
   }.
 Check NaturalTransformation.
 Check trans.
@@ -44,12 +44,14 @@ Definition Compose_NaturalTransformations (catC catD catE: Category)
                                           (nt2     : @NaturalTransformation catC catD G H fmapG fmapH FunctG FunctH):
                                              `(@NaturalTransformation catC catD F H fmapF fmapH FunctF FunctH).
 Proof. refine (@mk_nt _ _ _ _ _ _ FunctF FunctH
-                                   (fun a: obj catC =>  (@trans _ _ _ _ _ _ _ _ nt2 a) o (@trans _ _ _ _ _ _ _ _ nt1 a)) _).
+                                  (fun a: obj catC =>  (@trans _ _ _ _ _ _ _ _ nt2 a) o (@trans _ _ _ _ _ _ _ _ nt1 a))
+                                  _
+               ).
        intros. destruct nt1, nt2. simpl.
-         rewrite <- assoc. rewrite <- comm_diag3.
-         repeat rewrite assoc. apply rcancel. apply comm_diag4.
-Qed. 
-       
+         rewrite <- assoc. rewrite <- comm_diag0.
+         repeat rewrite assoc. apply rcancel. apply comm_diag1.
+Qed.
+Check Compose_NaturalTransformations.       
 
 (*
 Program Instance IdentityNaturalTransformation `(catC: Category) `(catD: Category) (F: obj catC -> obj catD) 

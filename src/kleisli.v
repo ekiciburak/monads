@@ -76,7 +76,7 @@ Definition coKleisli_Category (catC: Category) (F: obj catC -> obj catC)
                               (nt1 : NaturalTransformation catC catC F id fmapD (fun a b f => (@idf catC a b f)) D Id)
                               (nt2 : NaturalTransformation catC catC F (fun a: obj catC => F (F a))
                                      fmapD (fun a b f => fmapD _ _ (fmapD _ _ f)) D D2)
-                              (CM  : coMonad catC F fmapD Id D D2 nt1 nt2) : (Category).
+                              (CM  : coMonad catC F fmapD Id D D2 nt1 nt2): Category.
 Proof. refine (@mk_Category (obj catC)
                             (fun a b => (@arrow catC (id b) (F a)))
                             (fun a => (@trans _ _ _ _ _ _ _ _ nt1 a)) 
@@ -92,6 +92,34 @@ Proof. refine (@mk_Category (obj catC)
          rewrite <- assoc. rewrite cm_comm_diagram_b4, f_identity. unfold idf; reflexivity.
 Defined.
 Check coKleisli_Category.
+
+
+Definition coKleisli_Category2 (catC: Category) (F: obj catC -> obj catC)
+                               (Id  : (Functor2 catC catC id))
+                               (D   : (Functor2 catC catC F))
+                               (D2  : (Functor2 catC catC (fun a: obj catC => F (F a))))
+                               (nt1 : NaturalTransformation2 catC catC F id D Id)
+                               (nt2 : NaturalTransformation2 catC catC F (fun a: obj catC => F (F a)) D D2)
+                               (CM  : coMonad2 catC F Id D D2 nt1 nt2) :
+                              (forall a b f, (@fmap2 _ _ _ D2 a b f) = (@fmap2 _ _ _ D _ _ (@fmap2 _ _ _ D _ _ f))) ->
+                              (forall a b f, (@fmap2 _ _ _ Id a b f) = (@idf catC a b f)) ->
+                              (Category).
+Proof. intros. refine (@mk_Category (obj catC)
+                            (fun a b       => (@arrow catC (id b) (F a)))
+                            (fun a         => (@trans2 _ _ _ _ _ _ nt1 a)) 
+                            (fun a b c f g => g o (@fmap2 _ _ _ D _ _ f) o (@trans2 _ _ _ _ _ _  nt2 a))
+                            _ _ _ ).
+      - intros. simpl. destruct nt1, nt2, CM, D, D2. simpl in *. unfold id in *. rewrite preserve_comp3.
+         rewrite assoc. rewrite preserve_comp3. do 5 rewrite <- assoc. rewrite (cm_comm_diagram1'0 d).
+         do 5 rewrite assoc.  apply rcancel. specialize(@comm_diag4 (F d) c h). rewrite <- assoc.
+         rewrite <- comm_diag4. do 2 rewrite assoc.
+         rewrite H. reflexivity.
+      - intros. unfold id in *. destruct nt1, nt2, CM, D, D2. simpl in *. unfold id in *. rewrite <- assoc.
+         rewrite cm_comm_diagram2'0, cm_comm_diagram_b2'0, f_identity. reflexivity.
+      - intros. unfold id in *. destruct nt1, nt2, CM, D, D2. simpl in *. unfold id in *. rewrite <- comm_diag3.
+         rewrite <- assoc. rewrite cm_comm_diagram_b2'0, f_identity. rewrite H0; reflexivity.
+Defined.
+Check coKleisli_Category2.
 
 
 Definition Functor_Category (catC catD: Category) (F G: obj catC -> obj catD)

@@ -17,10 +17,10 @@ Class Monad (catC: Category) (F: obj catC -> obj catC)
   {
     comm_diagram1   : forall (a: obj catC), (@trans _ _ _ _ _ _ _ _ nt2 a) o (fmapT _ _  ((@trans _ _ _ _ _ _ _ _ nt2 a))) 
                                             = 
-                                             (@trans _ _ _ _ _ _ _ _ nt2 a) o (@trans _ _ _ _ _ _ _ _ nt2 (F a));
+                                            (@trans _ _ _ _ _ _ _ _ nt2 a) o (@trans _ _ _ _ _ _ _ _ nt2 (F a));
     comm_diagram2   : forall (a: obj catC), (@trans _ _ _ _ _ _ _ _ nt2 a) o (fmapT _ _ (@trans _ _ _ _ _ _ _ _ nt1 a)) 
                                             = 
-                                             (@trans _ _ _ _ _ _ _ _ nt2 a) o (@trans _ _ _ _ _ _ _ _ nt1 (F a));
+                                            (@trans _ _ _ _ _ _ _ _ nt2 a) o (@trans _ _ _ _ _ _ _ _ nt1 (F a));
     comm_diagram2_b1: forall (a: obj catC), (@trans _ _ _ _ _ _ _ _ nt2 a) o (fmapT _ _ (@trans _ _ _ _ _ _ _ _ nt1 a))
                                             =  (identity catC (F a));
     comm_diagram2_b2: forall (a: obj catC), (@trans _ _ _ _ _ _ _ _ nt2 a) o (@trans _ _ _ _ _ _ _ _ nt1 (F a)) 
@@ -48,5 +48,48 @@ Class coMonad (catC: Category) (F: obj catC -> obj catC)
                                                 = (identity catC (F a))
   }.
 Check coMonad.
+
+(* monads with NaturalTransformation2 *)
+
+Class Monad2 (catC: Category) (F: obj catC -> obj catC)
+             (Id  : (Functor2 catC catC id))
+             (T   : (Functor2 catC catC F))
+             (T2  : (Functor2 catC catC (fun a: obj catC => F (F a))))
+             (nt1 : @NaturalTransformation2 catC catC id F Id T)
+             (nt2 : @NaturalTransformation2 catC catC (fun a: obj catC => F (F a)) F T2 T): Type :=
+  {
+    comm_diagram1'   : forall (a: obj catC), (@trans2 _ _ _ _ _ _ nt2 a) o (@fmap2 _ _ _ T _ _ (@trans2 _ _ _ _ _ _  nt2 a))
+                                             = 
+                                             (@trans2 _ _ _ _ _ _ nt2 a) o (@trans2 _ _ _ _ _ _  nt2 (F a));
+    comm_diagram2'   : forall (a: obj catC), (@trans2 _ _ _ _ _ _ nt2 a) o (@fmap2 _ _ _ T _ _ (@trans2 _ _ _ _ _ _  nt1 a)) 
+                                             = 
+                                             (@trans2 _ _ _ _ _ _ nt2 a) o (@trans2 _ _ _ _ _ _ nt1 (F a));
+    comm_diagram2_b1': forall (a: obj catC), (@trans2 _ _ _ _ _ _ nt2 a) o (@fmap2 _ _ _ T _ _ (@trans2 _ _ _ _ _ _  nt1 a))
+                                             =  (identity catC (F a));
+    comm_diagram2_b2': forall (a: obj catC), (@trans2 _ _ _ _ _ _  nt2 a) o (@trans2 _ _ _ _ _ _  nt1 (F a)) 
+                                             = (identity catC (F a))
+  }.
+Check Monad2.
+
+Class coMonad2 (catC: Category) (F: obj catC -> obj catC)
+               (Id  : (Functor2 catC catC id))
+               (D   : (Functor2 catC catC F))
+               (D2  : (Functor2 catC catC (fun a: obj catC => F (F a))))
+               (nt1 : @NaturalTransformation2 catC catC F id D Id)
+               (nt2 : @NaturalTransformation2 catC catC F (fun a: obj catC => F (F a)) D D2): Type :=
+  {
+    cm_comm_diagram1'    : forall (a: obj catC), (@fmap2 _ _ _ D _ _ (@trans2 _ _ _ _ _ _ nt2 a)) o (@trans2 _ _ _ _ _ _ nt2 a) 
+                                                = 
+                                                (@trans2 _ _ _ _ _ _  nt2 (F a)) o (@trans2 _ _ _ _ _ _ nt2 a);
+    cm_comm_diagram2'    : forall (a: obj catC), (@fmap2 _ _ _ D _ _ (@trans2 _ _ _ _ _ _ nt1 a)) o (@trans2 _ _ _ _ _ _ nt2 a) 
+                                                = 
+                                                (@trans2 _ _ _ _ _ _ nt1 (F a)) o (@trans2 _ _ _ _ _ _ nt2 a);
+    cm_comm_diagram_b1'  : forall (a: obj catC), (@fmap2 _ _ _ D _ _ (@trans2 _ _ _ _ _ _ nt1 a)) o (@trans2 _ _ _ _ _ _ nt2 a)
+                                                = (identity catC (F a));
+    cm_comm_diagram_b2'  : forall (a: obj catC), (@trans2 _ _ _ _ _ _ nt1 (F a)) o (@trans2 _ _ _ _ _ _ nt2 a)
+                                                = (identity catC (F a))
+  }.
+Check coMonad2.
+
 
 End Make.

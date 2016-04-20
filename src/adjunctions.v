@@ -17,4 +17,13 @@ Class Adjunction (catC catD: Category) (F: obj catC -> obj catD) (G: obj catD ->
   }.
 Check Adjunction.
 
+Class Adjunction2 (catC catD: Category) (F: obj catC -> obj catD) (G: obj catD -> obj catC) 
+                  (FunctF: @Functor2 catC catD F) 
+                  (FunctG: @Functor2 catD catC G): Type :=
+  {
+     bijl' : forall (b: obj catC) (a: obj catD), (arrow catD a (F b)) -> (arrow catC (G a) b);
+     bijr' : forall (b: obj catC) (a: obj catD), (arrow catC (G a) b) -> (arrow catD a (F b))
+  }.
+Check Adjunction2.
+
 End Make.

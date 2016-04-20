@@ -115,4 +115,86 @@ Proof. refine(@mk_Functor
 Defined.
 Check Constant_Functor.
 
+(* obligated fmap *)
+
+Class Functor2 `(catC: Category) `(catD: Category) (F: obj catC -> obj catD): Type :=
+  mk_Functor2
+  {
+    fmap2            : forall {a b: obj catC} (f: arrow catC b a), (arrow catD (F b) (F a));
+    preserve_id2     : forall {a: obj catC}, fmap2 (@identity catC a) = (@identity catD (F a));
+    preserve_comp2   : forall {a b c: obj catC} (f: arrow catC b a) (g : arrow catC c b), fmap2 (g o f) = (fmap2 g) o (fmap2 f)
+  }.
+Check Functor2.
+
+Definition Opposite_Functor2 (catC: Category) `(catD: Category) 
+                             (F: obj catC -> obj catD)
+                             (FunctF: Functor2 catC catD F ): (Functor2 (Dual_Category catC) (Dual_Category catD) F).
+Proof. refine (@mk_Functor2
+                (Dual_Category catC)
+                (Dual_Category catD)
+                F
+                (fun a b => (@fmap2 catC catD F FunctF b a))
+                (fun a => (@preserve_id2 catC catD F FunctF a)) 
+                (fun a b c f g => (@preserve_comp2 catC catD F FunctF c b a g f))).
+Qed. 
+Check Opposite_Functor2.
+
+Definition Opposite_Opposite_Functor2 (catC: Category) (catD: Category) 
+                                     (F: obj (Dual_Category catC) -> obj (Dual_Category catD))
+                                     (FunctF: Functor2 (Dual_Category catC) (Dual_Category catD) F): (Functor2 catC catD F).
+Proof. refine (@mk_Functor2
+                catC 
+                catD
+                F
+                (fun a b => (@fmap2 (Dual_Category catC) (Dual_Category catD) F FunctF b a))
+                (fun a => (@preserve_id2 (Dual_Category catC) (Dual_Category catD) F FunctF a)) 
+                (fun a b c f g => (@preserve_comp2 (Dual_Category catC) (Dual_Category catD) F FunctF c b a g f))
+              ).
+Defined.
+Check Opposite_Opposite_Functor2.
+
+(**functors compose**)
+Definition Compose_Functors2 (catC catD catE: Category) (F: obj catC -> obj catD) (G: obj catD -> obj catE) 
+                             (FunctF : @Functor2 catC catD F) 
+                             (FunctG : @Functor2 catD catE G): (@Functor2 catC catE (@comp_obj_FG catC catD catE F G)).
+Proof. refine (@mk_Functor2
+                catC
+                catE
+                (fun a => G (F a))
+                (fun a b f => ((@fmap2 catD catE G FunctG _ _ (@fmap2 catC catD F FunctF a b f))))
+                _ _ ).
+      - intros. destruct catC, catD, catE, FunctF, FunctG. simpl in *.
+        specialize (preserve_id4 (F a)). rewrite <- preserve_id4. rewrite preserve_id3. reflexivity.
+      - intros. destruct catC, catD, catE, FunctF, FunctG. simpl in *.
+        rewrite <- preserve_comp4. rewrite preserve_comp3. reflexivity.
+Defined.
+Check Compose_Functors2.
+
+Definition IdentityFunctor2 (catC: Category): (@Functor2 catC catC id).
+Proof. refine (@mk_Functor2
+                catC
+                catC
+                id
+                (fun a b f => (@idf catC a b f))
+                _ _ ).
+        - intros. unfold idf. simpl; reflexivity.
+        - intros. unfold idf; reflexivity.
+Defined.
+Check IdentityFunctor2.
+
+(** constant functor **)
+Definition Constant_Functor2 (catC: Category) (catD: Category) (const: obj catD): 
+                            (Functor2 catC catD (fun _ => const)).
+Proof. refine(@mk_Functor2
+               catC
+               catD
+               (fun _     => const)
+               (fun _ _ _ => (@identity catD const))
+               _ _
+             ).
+       - intros. reflexivity.
+       - intros. simpl. rewrite identity_f; reflexivity.
+Defined.
+Check Constant_Functor2.
+
 End Make.

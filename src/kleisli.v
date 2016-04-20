@@ -30,7 +30,39 @@ Proof. refine (@mk_Category (obj catC)
        - intros. unfold id in *. destruct nt1, nt2, M, T, T2. simpl in *. unfold id in *. 
           rewrite comm_diagram4, comm_diagram2_b4, identity_f. reflexivity.
 Defined.
-Check Kleisli_Category.    
+Check Kleisli_Category.
+
+(*
+Definition Kleisli_Category2 (catC : Category) (F: obj catC -> obj catC)
+                             (Id   : (Functor2 catC catC id))
+                             (T    : (Functor2 catC catC F))
+                             (T2   : (Functor2 catC catC (fun a: obj catC => F (F a))))
+                             (nt1  : @NaturalTransformation2 catC catC id F Id T) 
+                             (nt2  : @NaturalTransformation2 catC catC (fun a: obj catC => F (F a)) F T2 T)
+                             (M    : @Monad2 catC F Id T T2 nt1 nt2) : (Category).
+Proof. refine (@mk_Category (obj catC)
+                            (fun a b       => (@arrow catC (F b) (id a)))
+                            (fun a         => (@trans2 _ _ _ _ _ _ nt1 a))
+                            (fun a b c f g => (@trans2 _ _ _ _ _ _ nt2 (id c)) o (@fmap2 _ _ _ T _ _ g) o f)
+                            _
+                            _
+                            _
+               ).
+       - intros. simpl. destruct nt1, nt2, M, T, T2. simpl in *. unfold id in *. rewrite preserve_comp3.
+         rewrite assoc. rewrite preserve_comp3. rewrite assoc. rewrite (comm_diagram1'0 a). do 2 rewrite assoc.
+         specialize(@comm_diag4 b (F a) f). (* rewrite comm_diag1. ?? *) apply rcancel. apply rcancel. 
+         rewrite <- assoc. rewrite <- assoc. rewrite comm_diag4. rewrite assoc. rewrite assoc. 
+         rewrite preserve_comp3.
+         rewrite preserve_comp4. 
+         rewrite <- preserve_comp4. rewrite assoc.  reflexivity.
+         intros. unfold id in *. destruct nt1, nt2, M, T, T2.  simpl in *. unfold id in *.
+         specialize (@comm_diag0 b (F a) f). rewrite <- assoc. rewrite comm_diag0. rewrite assoc.
+         rewrite comm_diagram2_b4. rewrite identity_f. unfold idf. reflexivity.
+       - intros. unfold id in *. destruct nt1, nt2, M, T, T2. simpl in *. unfold id in *. 
+          rewrite comm_diagram4, comm_diagram2_b4, identity_f. reflexivity.
+Defined.
+Check Kleisli_Category2.
+*)
 
 Definition coKleisli_Category (catC: Category) (F: obj catC -> obj catC)
                               (fmapD : forall (a b: obj catC) (f: arrow catC b a), (arrow catC (F b) (F a)))

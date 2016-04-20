@@ -22,7 +22,7 @@ Class Monad (catC: Category) (F: obj catC -> obj catC)
                                             = 
                                             (@trans _ _ _ _ _ _ _ _ nt2 a) o (@trans _ _ _ _ _ _ _ _ nt1 (F a));
     comm_diagram2_b1: forall (a: obj catC), (@trans _ _ _ _ _ _ _ _ nt2 a) o (fmapT _ _ (@trans _ _ _ _ _ _ _ _ nt1 a))
-                                            =  (identity catC (F a));
+                                            = (identity catC (F a));
     comm_diagram2_b2: forall (a: obj catC), (@trans _ _ _ _ _ _ _ _ nt2 a) o (@trans _ _ _ _ _ _ _ _ nt1 (F a)) 
                                             = (identity catC (F a))
   }.

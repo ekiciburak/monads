@@ -122,25 +122,5 @@ Defined.
 Check coKleisli_Category2.
 
 
-Definition Functor_Category (catC catD: Category) (F G: obj catC -> obj catD)
-                            (trans : forall (a: obj catC), (arrow catD (G a) (F a))): Category.
-Proof. refine (@mk_Category  {pFunctF: {F: obj catC -> obj catD  & 
-                                (forall (a b: obj catC) (f: arrow catC b a), (arrow catD (F b) (F a)))} &
-                                (Functor catC catD (projT1 pFunctF) (projT2 pFunctF))}
-                             (fun FunctF FunctG => 
-                                NaturalTransformation catC catD 
-                                                     (projT1 (projT1 FunctF)) (projT1 (projT1 FunctG)) 
-                                                     (projT2 (projT1 FunctF)) (projT2 (projT1 FunctG)) 
-                                                     (projT2 FunctF) (projT2 FunctG))
-                             (fun FunctF => 
-                                IdentityNaturalTransformation catC catD
-                                                              (projT1 (projT1 FunctF))  
-                                                              (projT2 (projT1 FunctF)) 
-                                                              (projT2 FunctF))
-                             _
-                             _ _ _ ). intros. Admitted. 
-
-(* to complete *)
-
 End Make.
    

@@ -32,7 +32,7 @@ Proof. refine (@mk_nt catC catD F F fmapF fmapF FunctF FunctF  (fun a => (@ident
 intros. rewrite identity_f. rewrite f_identity. reflexivity. Defined.
 Check IdentityNaturalTransformation.
 
-Definition Compose_NaturalTransformations (catC catD catE: Category) 
+Definition Compose_NaturalTransformations (catC catD: Category) 
                                           (F G H   : obj catC -> obj catD)
                                           (fmapF   : forall (a b: obj catC) (f: arrow catC b a), (arrow catD (F b) (F a)))
                                           (fmapG   : forall (a b: obj catC) (f: arrow catC b a), (arrow catD (G b) (G a)))
@@ -50,7 +50,7 @@ Proof. refine (@mk_nt _ _ _ _ _ _ FunctF FunctH
        intros. destruct nt1, nt2. simpl.
          rewrite <- assoc. rewrite <- comm_diag0.
          repeat rewrite assoc. apply rcancel. apply comm_diag1.
-Qed.
+Defined.
 Check Compose_NaturalTransformations.
 
 (* natural transformations with Functor2 *)
@@ -82,7 +82,7 @@ intros. rewrite identity_f. rewrite f_identity. reflexivity. Defined.
 Check IdentityNaturalTransformation2.
 
 
-Definition Compose_NaturalTransformations2 (catC catD catE: Category) 
+Definition Compose_NaturalTransformations2 (catC catD: Category) 
                                            (F G H   : obj catC -> obj catD)
                                            (FunctF  : @Functor2 catC catD F)
                                            (FunctG  : @Functor2 catC catD G)
@@ -97,7 +97,7 @@ Proof. refine (@mk_nt2 _ _ _ _ FunctF FunctH
        intros. destruct nt1, nt2. simpl.
          rewrite <- assoc. rewrite <- comm_diag3.
          repeat rewrite assoc. apply rcancel. apply comm_diag4.
-Qed.
+Defined.
 Check Compose_NaturalTransformations2.
 
 End Make.

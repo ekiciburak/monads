@@ -6,7 +6,6 @@ Require notation categories prods_pullbacks functors natural_transformations mon
 Module Make(Import M: notation.T).
  Module Export functor_categories_exp := kleisli.Make(M).
 
-
 Definition Functor_Category (catC catD: Category) (F G: obj catC -> obj catD)
                             (trans : forall (a: obj catC), (arrow catD (G a) (F a))): Category.
 Proof. refine (@mk_Category  {pFunctF: {F: obj catC -> obj catD  & 
@@ -30,7 +29,7 @@ Proof. refine (@mk_Category  {pFunctF: {F: obj catC -> obj catD  &
                                                                (nt1)
                                                                (nt2))
                              _ _ _ ). 
-        - intros.  simpl in *.  Admitted.
+        - intros. simpl in *. Admitted.
 
 Definition Functor_Category2 (catC catD: Category) (F G: obj catC -> obj catD)
                              (trans : forall (a: obj catC), (arrow catD (G a) (F a))): Category.

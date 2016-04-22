@@ -6,6 +6,29 @@ Require notation categories prods_pullbacks functors natural_transformations mon
 Module Make(Import M: notation.T).
  Module Export kleisli_exp := adjunctions.Make(M).
 
+Definition Kleisli_Category' (catC : Category) 
+                             (F    : obj catC -> obj catC)
+                             (fmapT: forall (a b: obj catC) (f: arrow catC b a), (arrow catC (F b) (F a)))
+                             (T    : Functor catC catC F fmapT)
+                             (M    : @Monad' catC F fmapT T) : (Category).
+Proof. destruct M. destruct nt3, nt4.
+       refine (@mk_Category (obj catC)
+                            (fun a b           => (@arrow catC (F b) a))
+                            (fun a             => (@trans0 a)) 
+                            (fun a b c f g     => (@trans1 c) o (fmapT _ _ g) o f)
+                            _ _ _ ).
+       - intros. simpl. destruct T, T3. simpl in *. unfold id in *. rewrite preserve_comp0.
+         rewrite assoc. rewrite preserve_comp0. rewrite assoc. rewrite (comm_diagram1''0 a). do 2 rewrite assoc.
+         specialize(@comm_diag1 b (F a) f). (* rewrite comm_diag1. ?? *) apply rcancel. apply rcancel. 
+         rewrite <- assoc. rewrite <- assoc. rewrite comm_diag1. reflexivity.
+       - intros. unfold id in *. destruct T, T3.  simpl in *. unfold id in *.
+         specialize (@comm_diag0 b (F a) f). rewrite <- assoc. rewrite comm_diag0. rewrite assoc.
+         rewrite comm_diagram2_b2''0. rewrite identity_f. unfold idf. reflexivity.
+       - intros. unfold id in *. destruct T, T3. simpl in *. unfold id in *. 
+          rewrite comm_diagram2''0, comm_diagram2_b2''0, identity_f. reflexivity.
+Defined.
+Check Kleisli_Category'.
+
 Definition Kleisli_Category (catC : Category) (F: obj catC -> obj catC)
                             (fmapT: forall (a b: obj catC) (f: arrow catC b a), (arrow catC (F b) (F a)))
                             (Id   : (Functor catC catC id (fun a b f => (@idf catC a b f))))
@@ -67,6 +90,27 @@ Proof. intros. refine (@mk_Category (obj catC)
           rewrite comm_diagram2'0, comm_diagram2_b2'0, identity_f. reflexivity.
 Defined.
 Check Kleisli_Category2.
+
+Definition coKleisli_Category' (catC: Category) (F: obj catC -> obj catC)
+                               (fmapD : forall (a b: obj catC) (f: arrow catC b a), (arrow catC (F b) (F a)))
+                               (D   : (Functor catC catC F fmapD))
+                               (CM  : coMonad' catC F fmapD D): Category.
+Proof. destruct CM. destruct cnt3, cnt4.
+       refine (@mk_Category (obj catC)
+                            (fun a b => (@arrow catC (id b) (F a)))
+                            (fun a => (@trans0 a)) 
+                            (fun a b c f g => g o (fmapD _ _ f) o (@trans1 a))
+                            _ _ _ ).
+      - intros. simpl. destruct D, D3. simpl in *. unfold id in *. rewrite preserve_comp0.
+         rewrite assoc. rewrite preserve_comp0. do 5 rewrite <- assoc. rewrite (cm_comm_diagram1''0 d).
+         do 5 rewrite assoc.  apply rcancel. specialize(@comm_diag1 (F d) c h). rewrite <- assoc.
+         rewrite <- comm_diag1. do 2 rewrite assoc. reflexivity.
+      - intros. unfold id in *. destruct D, D3. simpl in *. unfold id in *. rewrite <- assoc.
+         rewrite cm_comm_diagram2''0, cm_comm_diagram_b2''0, f_identity. reflexivity.
+      - intros. unfold id in *. destruct D, D3. simpl in *. unfold id in *. rewrite <- comm_diag0.
+         rewrite <- assoc. rewrite cm_comm_diagram_b2''0, f_identity. unfold idf; reflexivity.
+Defined.
+Check coKleisli_Category'.
 
 Definition coKleisli_Category (catC: Category) (F: obj catC -> obj catC)
                               (fmapD : forall (a b: obj catC) (f: arrow catC b a), (arrow catC (F b) (F a)))

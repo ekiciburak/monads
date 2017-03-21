@@ -46,53 +46,68 @@ Class Adjunction2 (catC catD: Category)
                      bijection catC catD a b F G
   }.
 
-Program Instance Id (catC: Category): (@Functor2 catC catC id).
-Check IdentityFunctor2.
+Program Instance Id (catC: Category): (@Functor catC catC id (fun a b (f: arrow catC b a) => f)).
 
-Program Instance T (catC catD: Category)
-                    (F: obj catC -> obj catD) (G: obj catD -> obj catC)
-                    (fmapF: @Functor2 catC catD F)
-                    (fmapG: @Functor2 catD catC G):
-                    (@Functor2 catC catC (fun a: obj catC => G (F a))).
-Next Obligation. destruct fmapF, fmapG. apply fmap4, fmap3, f0. Defined.
-Next Obligation. unfold T_obligation_1. destruct fmapF, fmapG.
-                 now rewrite preserve_id3, preserve_id4. Defined.
-Next Obligation. unfold T_obligation_1. destruct fmapF, fmapG.
-                 now rewrite preserve_comp3, preserve_comp4. Defined.
+Program Instance T  (catC catD: Category)
+                    (F: obj catC -> obj catD) 
+                    (G: obj catD -> obj catC)
+                    (fmapF : forall (a b: obj catC) (f: arrow catC b a), (arrow catD (F b) (F a)))
+                    (fmapG : forall (a b: obj catD) (f: arrow catD b a), (arrow catC (G b) (G a)))
+                    (FunctF: @Functor catC catD F fmapF) 
+                    (FunctG: @Functor catD catC G fmapG):
+                    (@Functor catC catC (fun a: obj catC => G (F a)) (fun a b f => fmapG _ _ (fmapF _ _ f))).
+Next Obligation. destruct FunctF, FunctG.
+                 now rewrite preserve_id0, preserve_id1. Defined.
+Next Obligation. destruct FunctF, FunctG.
+                 now rewrite preserve_comp0, preserve_comp1. Defined.
 
 Program Instance T2 (catC catD: Category)
-                    (F: obj catC -> obj catD) (G: obj catD -> obj catC)
-                    (fmapF: @Functor2 catC catD F)
-                    (fmapG: @Functor2 catD catC G):
-                    (@Functor2 catC catC (fun a: obj catC => G (F (G (F a))))).
-Next Obligation. destruct fmapF, fmapG. apply fmap4, fmap3, fmap4, fmap3, f0. Defined.
-Next Obligation. unfold T2_obligation_1. destruct fmapF, fmapG.
-                 now rewrite preserve_id3, preserve_id4, preserve_id3, preserve_id4. Defined.
-Next Obligation. unfold T2_obligation_1. destruct fmapF, fmapG.
-                 now rewrite preserve_comp3, preserve_comp4, preserve_comp3, preserve_comp4. Defined.
+                    (F: obj catC -> obj catD) 
+                    (G: obj catD -> obj catC)
+                    (fmapF : forall (a b: obj catC) (f: arrow catC b a), (arrow catD (F b) (F a)))
+                    (fmapG : forall (a b: obj catD) (f: arrow catD b a), (arrow catC (G b) (G a)))
+                    (FunctF: @Functor catC catD F fmapF) 
+                    (FunctG: @Functor catD catC G fmapG):
+                    (@Functor catC catC (fun a: obj catC => G (F (G (F a)))) 
+                                        (fun a b f => fmapG _ _ (fmapF _ _ (fmapG _ _ (fmapF _ _ f))))).
+Next Obligation. destruct FunctF, FunctG.
+                 now rewrite preserve_id0, preserve_id1, preserve_id0, preserve_id1. Defined.
+Next Obligation. destruct FunctF, FunctG.
+                 now rewrite preserve_comp0, preserve_comp1, preserve_comp0, preserve_comp1. Defined.
 
-Lemma asd: forall (catC catD: Category)
-                  (F: obj catC -> obj catD) (G: obj catD -> obj catC)
-                  (fmapF: @Functor2 catC catD F)
-                  (fmapG: @Functor2 catD catC G)
-                  (eta  : @NaturalTransformation2 catC catC
-                          id 
-                          (fun a => G (F a)) 
-                          (Id catC) 
-                          (T catC catD F G fmapF fmapG)) 
-                  (mu   : @NaturalTransformation2 catC catC 
-                          (fun a: obj catC => G (F (G (F a))))
-                          (fun a => G (F a)) 
-                          (T2 catC catD F G fmapF fmapG)
-                          (T catC catD F G fmapF fmapG)),
-                  Adjunction2 catC catD F G fmapF fmapG ->
-                  Monad2 catC (fun a => G (F a)) 
-                    (IdentityFunctor2 catC) 
-                    (T catC catD F G fmapF fmapG) 
-                    (T2 catC catD F G fmapF fmapG)
-                    eta 
-                    mu.
-Proof. Admitted.
+
+(** an adjunction gives raise to a monad *)
+Lemma eq_adj_mon: forall (catC catD: Category)
+                  (F     : obj catC -> obj catD)
+                  (G     : obj catD -> obj catC)
+                  (fmapF : forall (a b: obj catC) (f: arrow catC b a), (arrow catD (F b) (F a)))
+                  (fmapG : forall (a b: obj catD) (f: arrow catD b a), (arrow catC (G b) (G a)))
+                  (FunctF: @Functor catC catD F fmapF) 
+                  (FunctG: @Functor catD catC G fmapG)
+                  (eta   : @NaturalTransformation catC catC
+                            id 
+                            (fun a => G (F a))
+                            (fun a b (f: arrow catC b a) => f)
+                            (fun a b f => fmapG _ _ (fmapF _ _ f))
+                            (Id catC) 
+                            (T catC catD F G fmapF fmapG FunctF FunctG)) 
+                  (mu   : @NaturalTransformation catC catC 
+                            (fun a: obj catC => G (F (G (F a))))
+                            (fun a => G (F a))
+                            (fun a b f => fmapG _ _ (fmapF _ _ (fmapG _ _ (fmapF _ _ f))))
+                            (fun a b f => fmapG _ _ (fmapF _ _ f))
+                            (T2 catC catD F G fmapF fmapG FunctF FunctG)
+                            (T catC catD F G fmapF fmapG FunctF FunctG)),
+                  Adjunction catC catD F G fmapF fmapG FunctF FunctG ->
+                  Monad catC 
+                        (fun a => G (F a))
+                        (fun a b f => fmapG _ _ (fmapF _ _ f))
+                        (Id catC)
+                        (T catC catD F G fmapF fmapG FunctF FunctG) 
+                        (T2 catC catD F G fmapF fmapG FunctF FunctG)
+                        eta 
+                        mu.
+Proof. intros. destruct H, eta, mu, FunctF, FunctG. simpl. Admitted.
 
 
 End Make.

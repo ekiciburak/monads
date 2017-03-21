@@ -61,6 +61,19 @@ Next Obligation. destruct FunctF, FunctG.
 Next Obligation. destruct FunctF, FunctG.
                  now rewrite preserve_comp0, preserve_comp1. Defined.
 
+Program Instance D  (catC catD: Category)
+                    (F: obj catC -> obj catD) 
+                    (G: obj catD -> obj catC)
+                    (fmapF : forall (a b: obj catC) (f: arrow catC b a), (arrow catD (F b) (F a)))
+                    (fmapG : forall (a b: obj catD) (f: arrow catD b a), (arrow catC (G b) (G a)))
+                    (FunctF: @Functor catC catD F fmapF) 
+                    (FunctG: @Functor catD catC G fmapG):
+                    (@Functor catD catD (fun a: obj catD => F (G a)) (fun a b f => fmapF _ _ (fmapG _ _ f))).
+Next Obligation. destruct FunctF, FunctG.
+                 now rewrite preserve_id1, preserve_id0. Defined.
+Next Obligation. destruct FunctF, FunctG.
+                 now rewrite preserve_comp1, preserve_comp0. Defined.
+
 Program Instance T2 (catC catD: Category)
                     (F: obj catC -> obj catD) 
                     (G: obj catD -> obj catC)
@@ -74,6 +87,20 @@ Next Obligation. destruct FunctF, FunctG.
                  now rewrite preserve_id0, preserve_id1, preserve_id0, preserve_id1. Defined.
 Next Obligation. destruct FunctF, FunctG.
                  now rewrite preserve_comp0, preserve_comp1, preserve_comp0, preserve_comp1. Defined.
+
+Program Instance D2 (catC catD: Category)
+                    (F: obj catC -> obj catD) 
+                    (G: obj catD -> obj catC)
+                    (fmapF : forall (a b: obj catC) (f: arrow catC b a), (arrow catD (F b) (F a)))
+                    (fmapG : forall (a b: obj catD) (f: arrow catD b a), (arrow catC (G b) (G a)))
+                    (FunctF: @Functor catC catD F fmapF) 
+                    (FunctG: @Functor catD catC G fmapG):
+                    (@Functor catD catD (fun a: obj catD => F (G (F (G a)))) 
+                                        (fun a b f => fmapF _ _ (fmapG _ _ (fmapF _ _ (fmapG _ _ f))))).
+Next Obligation. destruct FunctF, FunctG.
+                 now rewrite preserve_id1, preserve_id0, preserve_id1, preserve_id0. Defined.
+Next Obligation. destruct FunctF, FunctG.
+                 now rewrite preserve_comp1, preserve_comp0, preserve_comp1, preserve_comp0. Defined.
 
 
 (** an adjunction gives raise to a monad *)
@@ -90,24 +117,39 @@ Lemma eq_adj_mon: forall (catC catD: Category)
                             (fun a b (f: arrow catC b a) => f)
                             (fun a b f => fmapG _ _ (fmapF _ _ f))
                             (Id catC) 
-                            (T catC catD F G fmapF fmapG FunctF FunctG)) 
+                            (T catC catD F G fmapF fmapG FunctF FunctG))
+                  (eps   : @NaturalTransformation catD catD
+                            (fun a => F (G a))
+                            id
+                            (fun a b f => fmapF _ _ (fmapG _ _ f))
+                            (fun a b (f: arrow catD b a) => f)
+                            (D catC catD F G fmapF fmapG FunctF FunctG)
+                            (Id catD))
                   (mu   : @NaturalTransformation catC catC 
                             (fun a: obj catC => G (F (G (F a))))
                             (fun a => G (F a))
                             (fun a b f => fmapG _ _ (fmapF _ _ (fmapG _ _ (fmapF _ _ f))))
                             (fun a b f => fmapG _ _ (fmapF _ _ f))
                             (T2 catC catD F G fmapF fmapG FunctF FunctG)
-                            (T catC catD F G fmapF fmapG FunctF FunctG)),
+                            (T catC catD F G fmapF fmapG FunctF FunctG))
+                  (del   : @NaturalTransformation catD catD 
+                            (fun a => F (G a))
+                            (fun a: obj catD => F (G (F (G a))))
+                            (fun a b f => fmapF _ _ (fmapG _ _ f))
+                            (fun a b f => fmapF _ _ (fmapG _ _ (fmapF _ _ (fmapG _ _ f))))
+                            (D catC catD F G fmapF fmapG FunctF FunctG)
+                            (D2 catC catD F G fmapF fmapG FunctF FunctG)),
                   Adjunction catC catD F G fmapF fmapG FunctF FunctG ->
                   Monad catC 
                         (fun a => G (F a))
                         (fun a b f => fmapG _ _ (fmapF _ _ f))
                         (Id catC)
-                        (T catC catD F G fmapF fmapG FunctF FunctG) 
+                        (T catC catD F G fmapF fmapG FunctF FunctG)
                         (T2 catC catD F G fmapF fmapG FunctF FunctG)
-                        eta 
-                        mu.
-Proof. intros. destruct H, eta, mu, FunctF, FunctG. simpl. Admitted.
+                        eta (** id_(FX) *)
+                        mu  (** G (eps (FX)) *).
+Proof. intros.
+       refine (@mk_Monad catC (fun a : obj catC => G (F a)) _ _ _ _ _ _ _ _ _ _ ). Admitted.
 
 
 End Make.

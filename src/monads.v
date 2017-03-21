@@ -14,6 +14,7 @@ Class Monad (catC: Category) (F: obj catC -> obj catC)
                         (T2  : (Functor catC catC (fun a: obj catC => F (F a)) (fun a b f => fmapT _ _ (fmapT _ _ f))))
                         (nt1 :@NaturalTransformation catC catC id F (fun a b f => (@idf catC a b f)) fmapT Id T)
                         (nt2 :@NaturalTransformation catC catC (fun a: obj catC => F (F a)) F (fun a b f => fmapT _ _ (fmapT _ _ f)) fmapT T2 T): Type :=
+  mk_Monad  
   {
     comm_diagram1   : forall (a: obj catC), (@trans _ _ _ _ _ _ _ _ nt2 a) o (fmapT _ _  ((@trans _ _ _ _ _ _ _ _ nt2 a))) 
                                             = 
@@ -32,6 +33,7 @@ Class Monad' (catC  : Category)
              (F     : obj catC -> obj catC)
              (fmapT : forall (a b: obj catC) (f: arrow catC b a), (arrow catC (F b) (F a)))
              (T     : (Functor catC catC F fmapT)): Type :=
+  mk_Monad'
   {
     Id  : (Functor catC catC id (fun a b f => (@idf catC a b f)));
     T2  : (Functor catC catC (fun a: obj catC => F (F a)) (fun a b f => fmapT _ _ (fmapT _ _ f)));
@@ -77,9 +79,10 @@ Class coMonad' (catC  : Category)
                (F     : obj catC -> obj catC)
                (fmapD : forall (a b: obj catC) (f: arrow catC b a), (arrow catC (F b) (F a)))
                (D     : (Functor catC catC F fmapD)): Type :=
+  mk_CoMonad'
   {
 
-    cId      : (Functor catC catC id (fun a b f => (@idf catC a b f)));
+    cId       : (Functor catC catC id (fun a b f => (@idf catC a b f)));
     D2        : (Functor catC catC (fun a: obj catC => F (F a)) (fun a b f => fmapD _ _ (fmapD _ _ f)));
     cnt1      : @NaturalTransformation catC catC F id fmapD (fun a b f => (@idf catC a b f)) D cId;
     cnt2      : @NaturalTransformation catC catC F (fun a: obj catC => F (F a)) fmapD (fun a b f => fmapD _ _ (fmapD _ _ f)) D D2;

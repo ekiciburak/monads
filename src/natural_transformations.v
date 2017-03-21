@@ -1,6 +1,7 @@
 Require Import Morphisms.
 Import ProperNotations.
 Require Import SetoidClass.
+
 Require notation categories prods_pullbacks functors.
 
 Module Make(Import M: notation.T).
@@ -22,7 +23,7 @@ Class NaturalTransformation (catC catD: Category) (F G: obj catC -> obj catD)
     comm_diag:  forall {a b: obj catC} (f: arrow catC b a), fmapG _ _ f o trans a  = trans b o fmapF _ _ f
   }.
 Check NaturalTransformation.
-Check trans.
+(*Check trans.*)
 
 Definition IdentityNaturalTransformation `(catC: Category) `(catD: Category) (F: obj catC -> obj catD) 
                             (fmapF : forall (a b: obj catC) (f: arrow catC b a), (arrow catD (F b) (F a)))
@@ -98,6 +99,11 @@ Proof. refine (@mk_nt2 _ _ _ _ FunctF FunctH
          rewrite <- assoc. rewrite <- comm_diag3.
          repeat rewrite assoc. apply rcancel. apply comm_diag4.
 Defined.
+Print Compose_NaturalTransformations2.
 Check Compose_NaturalTransformations2.
+
+
+
+
 
 End Make.

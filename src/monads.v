@@ -104,6 +104,7 @@ Class Monad2 (catC: Category) (F: obj catC -> obj catC)
              (T2  : (Functor2 catC catC (fun a: obj catC => F (F a))))
              (nt1 : @NaturalTransformation2 catC catC id F Id T)
              (nt2 : @NaturalTransformation2 catC catC (fun a: obj catC => F (F a)) F T2 T): Type :=
+  mk_Monad2
   {
     comm_diagram1'   : forall (a: obj catC), (@trans2 _ _ _ _ _ _ nt2 a) o (@fmap2 _ _ _ T _ _ (@trans2 _ _ _ _ _ _  nt2 a))
                                              = 

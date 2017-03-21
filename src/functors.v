@@ -126,6 +126,12 @@ Class Functor2 `(catC: Category) `(catD: Category) (F: obj catC -> obj catD): Ty
   }.
 Check Functor2.
 
+(*
+Program Instance IdentityFunctor2 (catC: Category): 
+   (@Functor2 catC catC (fun a => id a)).
+Check IdentityFunctor2.
+*)
+
 Definition Opposite_Functor2 (catC: Category) `(catD: Category) 
                              (F: obj catC -> obj catD)
                              (FunctF: Functor2 catC catD F ): (Functor2 (Dual_Category catC) (Dual_Category catD) F).

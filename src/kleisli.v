@@ -19,10 +19,10 @@ Proof. destruct M. destruct nt3, nt4.
                             _ _ _ ).
        - intros. simpl. destruct T, T3. simpl in *. unfold id in *. rewrite preserve_comp0.
          rewrite assoc. rewrite preserve_comp0. rewrite assoc. rewrite (comm_diagram1''0 a). do 2 rewrite assoc.
-         specialize(@comm_diag1 b (F a) f). (* rewrite comm_diag1. ?? *) apply rcancel. apply rcancel. 
+         specialize(@comm_diag1 b (F a) f0). (* rewrite comm_diag1. ?? *) apply rcancel. apply rcancel. 
          rewrite <- assoc. rewrite <- assoc. rewrite comm_diag1. reflexivity.
        - intros. unfold id in *. destruct T, T3.  simpl in *. unfold id in *.
-         specialize (@comm_diag0 b (F a) f). rewrite <- assoc. rewrite comm_diag0. rewrite assoc.
+         specialize (@comm_diag0 b (F a) f0). rewrite <- assoc. rewrite comm_diag0. rewrite assoc.
          rewrite comm_diagram2_b2''0. rewrite identity_f. unfold idf. reflexivity.
        - intros. unfold id in *. destruct T, T3. simpl in *. unfold id in *. 
           rewrite comm_diagram2''0, comm_diagram2_b2''0, identity_f. reflexivity.
@@ -45,10 +45,10 @@ Proof. refine (@mk_Category (obj catC)
                             _ _ _ ).
        - intros. simpl. destruct nt1, nt2, M, T, T2. simpl in *. unfold id in *. rewrite preserve_comp0.
          rewrite assoc. rewrite preserve_comp0. rewrite assoc. rewrite (comm_diagram3 a). do 2 rewrite assoc.
-         specialize(@comm_diag1 b (F a) f). (* rewrite comm_diag1. ?? *) apply rcancel. apply rcancel. 
+         specialize(@comm_diag1 b (F a) f0). (* rewrite comm_diag1. ?? *) apply rcancel. apply rcancel. 
          rewrite <- assoc. rewrite <- assoc. rewrite comm_diag1. reflexivity.
        - intros. unfold id in *. destruct nt1, nt2, M, T, T2.  simpl in *. unfold id in *.
-         specialize (@comm_diag0 b (F a) f). rewrite <- assoc. rewrite comm_diag0. rewrite assoc.
+         specialize (@comm_diag0 b (F a) f0). rewrite <- assoc. rewrite comm_diag0. rewrite assoc.
          rewrite comm_diagram2_b4. rewrite identity_f. unfold idf. reflexivity.
        - intros. unfold id in *. destruct nt1, nt2, M, T, T2. simpl in *. unfold id in *. 
           rewrite comm_diagram4, comm_diagram2_b4, identity_f. reflexivity.
@@ -76,14 +76,14 @@ Proof. intros. refine (@mk_Category (obj catC)
                ).
        - intros. simpl. destruct nt1, nt2, M, T, T2. simpl in *. unfold id in *. rewrite preserve_comp3. 
          rewrite assoc. rewrite preserve_comp3. rewrite assoc. rewrite (comm_diagram1'0 a). do 2 rewrite assoc.
-         apply rcancel. apply rcancel. specialize(@comm_diag4 b (F a) f).
+         apply rcancel. apply rcancel. specialize(@comm_diag4 b (F a) f0).
          (* rewrite comm_diag1. ?? *)  
          rewrite <- assoc. rewrite <- assoc. rewrite comm_diag4.
-         cut (fmap4 b (F a) f = fmap3 (F b) (F (F a)) (fmap3 b (F a) f)).
+         cut (fmap4 b (F a) f0 = fmap3 (F b) (F (F a)) (fmap3 b (F a) f0)).
            + intros. rewrite H. reflexivity.
            + apply H.
        - intros. unfold id in *. destruct nt1, nt2, M, T, T2.  simpl in *. unfold id in *.
-         specialize (@comm_diag3 b (F a) f). rewrite <- assoc. rewrite comm_diag3. rewrite assoc.
+         specialize (@comm_diag3 b (F a) f0). rewrite <- assoc. rewrite comm_diag3. rewrite assoc.
          rewrite comm_diagram2_b2'0. rewrite identity_f. destruct Id. unfold idf. rewrite H0.
          simpl; reflexivity.
        - intros. unfold id in *. destruct nt1, nt2, M, T, T2. simpl in *. unfold id in *. 
